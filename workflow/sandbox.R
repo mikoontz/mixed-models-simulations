@@ -45,6 +45,16 @@ cor(plot_data$plot_moisture_s, plot_data$plot_offset_uncorr)
 cor(plot_data$plot_moisture_s, plot_data$plot_offset_corr)
 cor(plot_data$plot_moisture_s, plot_data$plot_offset_semicorr)
 
+
+ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = plot_moisture_s, y = y_uncorr)) +
+ggplot2::geom_point()
+
+ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = plot_moisture_s, y = y_corr)) +
+ggplot2::geom_point()
+
+ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = plot_moisture_s, y = y_semicorr)) +
+  ggplot2::geom_point()
+
 # measured data for each plant
 data <-
   tidyr::tibble(plantID = 1:n_plants,
@@ -63,7 +73,7 @@ summary(fm1_lme4)
 fm2_lme4 <- lme4::lmer(formula = y_corr ~ plot_moisture_s + (1 | plot), data = data)
 summary(fm2_lme4)
 
-# random effect is perfectly correlated with plot-level soil moisture
+# random effect is semicorrelated with plot-level soil moisture
 fm3_lme4 <- lme4::lmer(formula = y_semicorr ~ plot_moisture_s + (1 | plot), data = data)
 summary(fm3_lme4)
 
@@ -91,17 +101,6 @@ offset_diffs <-
 
 cor(offset_diffs$plot_moisture_s, offset_diffs$estimated_plot_offset)
 
-
-
-
-ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = plot_moisture_s, y = y_uncorr)) +
-  ggplot2::geom_point()
-
-ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = plot_moisture_s, y = y_corr)) +
-  ggplot2::geom_point()
-
-ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = plot_moisture_s, y = y_semicorr)) +
-  ggplot2::geom_point()
 
 fm1_brms <- brms::brm(formula = y_uncorr ~ plot_moisture_s + (1 | plot), data = data, cores = 4, chains = 4)
 summary(fm1_brms)

@@ -26,6 +26,11 @@ err_sd <- 5
 # number of individuals measured
 n_plants <- 1000
 
+# plots in which the plants are measured (n = 10)
+n_plots <- 10
+plots <- rep(1:n_plots, each = 10)
+plots
+
 # measured values of the first covariate for each individual
 # random number generator for a uniform distribution with specified parameters
 # amount of water actually given to each plant
@@ -38,27 +43,30 @@ x_1 <- runif(n = n_plants, min = 0, max = 5)
 # and the actual plant height change for unmodeled reasons)
 error <- rnorm(n = n_plants, mean = 0, sd = err_sd)
 
+# Simulated offsets for each plot 
+sd_plot_intercept <- 1
+re_intercept <- rnorm(n=n_plots, mean = 0, sd = sd_plot_intercept)
+
 # measured response value for each individual, given the *known*
 # values of the intercept, measured value of x_1, effect size of x_1 (i.e., the slope aka b_1), and residual error (assuming a linear combination of these things,
 # like we do in linear regression)
 # the measured change in plant height in centimeters
-y <- b_0 + b_1*x_1 + error
+y <- b_0 + b_1*x_1 + error + re_intercept[plots]
 
 # put in a data frame
-data <- data.frame(x_1 = x_1, y = y)
+data <- data.frame(x_1 = x_1, y = y, plot_id = plots)
 
 # plot the data
-plot(data$x_1, data$y, xlab = "Water added (L)", ylab = "Plant height change (cm)")
+library(ggplot2)
+ggplot(data, aes(x = x_1, y = y, color = as.factor(plot_id))) +
+         geom_point()+
+          xlab("Water added (L)")+
+          ylab("Plant height change (cm)")
 
-# fitted model using an oridinary least squares (OLS) epistemology
-fm1 <- lm(y ~ x_1, data = data)
+# fitted model using an Maximum Likelihood 
+library(lme4)
+fm1 <- lmer(y ~ x_1 + (1|plot_id), data = data)
 
 # summary of the model
 summary(fm1)
 
-# add the model fit to the plot
-abline(fm1, col = "red")
-abline(a = b_0, b = b_1, col = "blue")
-
-# Modifying the standard deviation of the error makes the relationship between
-# y and x noisier, and a bit harder to estimate parameters
