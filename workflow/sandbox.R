@@ -41,6 +41,8 @@ plot_data <-
                 plot_offset_corr = plot_moisture_s*b_moisture - b_0) %>% 
   dplyr::mutate(plot_offset_semicorr = plot_offset_corr + rnorm(n = nrow(.), mean = 0, sd = 2))
 
+head(plot_data)
+
 cor(plot_data$plot_moisture_s, plot_data$plot_offset_uncorr)
 cor(plot_data$plot_moisture_s, plot_data$plot_offset_corr)
 cor(plot_data$plot_moisture_s, plot_data$plot_offset_semicorr)
@@ -64,6 +66,10 @@ data <-
   dplyr::mutate(y_uncorr = b_0 + b_moisture*plot_moisture_s + plot_offset_uncorr + residuals,
                 y_corr = b_0 + b_moisture*plot_moisture_s + plot_offset_corr + residuals,
                 y_semicorr = b_0 + b_moisture*plot_moisture_s + plot_offset_semicorr + residuals)
+# maybe just add a 1|plot but no true random effect of plot
+# what if true fixed effect is non-linear, would you lose this understanding if you have random effect of plot
+# What if random effect is non-normal? What about skewed?
+# What is how data is positioned over x?
 
 # random effect is uncorrelated with plot-level soil moisture
 fm1_lme4 <- lme4::lmer(formula = y_uncorr ~ plot_moisture_s + (1 | plot), data = data)

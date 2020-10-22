@@ -46,6 +46,7 @@ y <- b_0 + b_1*x_1 + error
 
 # put in a data frame
 data <- data.frame(x_1 = x_1, y = y)
+head(data)
 
 # plot the data
 plot(data$x_1, data$y, xlab = "Water added (L)", ylab = "Plant height change (cm)")

@@ -28,7 +28,7 @@ n_plants <- 1000
 
 # plots in which the plants are measured (n = 10)
 n_plots <- 10
-plots <- rep(1:n_plots, each = 10)
+plots <- rep(1:n_plots, each = 100)
 plots
 
 # measured values of the first covariate for each individual
